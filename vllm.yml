@@ -1,0 +1,35 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-agentes-qwen
+    restart: unless-stopped
+    ports:
+      - "11600:8000"
+    volumes:
+      - /datos/contenedores/lcid-vllm-modelos:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: x
+              capabilities: [gpu]
+    command:
+      - "--model"
+      - "Qwen/Qwen1.5-7B-Chat"
+      - "--host"
+      - "0.0.0.0"
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui-vllm-qwen
+    restart: unless-stopped
+    ports:
+      - "3001:8080"
+    volumes:
+      - /datos/contenedores/lcid-webui-vllm:/app/backend/data
+    environment:
+      - OPENAI_API_BASE_URL=http://vllm:8000/v1
+      - OPENAI_API_KEY=vllm-dummy-key
+    depends_on:
+      - vllm
