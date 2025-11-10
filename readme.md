@@ -6,8 +6,6 @@
 
 **Repositorio asociado:** `[github.com/starcrash16/contenerizacion-vLLM]`
 
----
-
 ## Resumen
 
 Este repositorio documenta el despliegue de un servidor de inferencia **vLLM** de alto rendimiento y una interfaz gráfica **Open Web UI**, orquestados mediante **Podman** y `podman-compose`.
@@ -86,3 +84,16 @@ Utilice los siguientes comandos de `podman-compose` para administrar la pila:
     # No elimina los volúmenes de datos persistentes
     podman-compose down
     ```
+
+---
+
+## Comparativa de Comandos (Podman vs Docker)
+
+Este proyecto está configurado para `podman-compose`. La sintaxis es directamente compatible con `docker-compose` si se prefiere utilizar Docker.
+
+| Acción | Comando Podman (Rootless) | Comando Docker |
+| :--- | :--- | :--- |
+| **Iniciar servicios** (segundo plano) | `podman-compose up -d` | `docker-compose up -d` |
+| **Ver registros** (en tiempo real) | `podman-compose logs -f` | `docker-compose logs -f` |
+| **Detener y eliminar contenedores** | `podman-compose down` | `docker-compose down` |
+| **Listar contenedores en ejecución** | `podman ps` | `docker ps` |
