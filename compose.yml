@@ -1,5 +1,7 @@
+
 services:
   vllm:
+    # Imagen oficial de vLLM
     image: vllm/vllm-openai:latest
     container_name: vllm-agentes-qwen
     restart: unless-stopped
@@ -11,25 +13,34 @@ services:
       resources:
         reservations:
           devices:
+            # Asignar todas las GPUs a considerar (1 por default)
             - driver: nvidia
-              count: x
+              count: 1
               capabilities: [gpu]
     command:
+      # Modelo oficial obtenido desde Hugging Face
       - "--model"
       - "Qwen/Qwen1.5-7B-Chat"
+      # Escuchar en todas las interfaces dentro de la red del pod
       - "--host"
       - "0.0.0.0"
 
   open-webui:
+    # Imagen oficial de Open Web UI
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui-vllm-qwen
     restart: unless-stopped
     ports:
+      # Interfaz web expuesta en el puerto 3001 del host
       - "3001:8080"
     volumes:
+      # Volumen persistente para la base de datos de la UI (usuarios, chats)
       - /datos/contenedores/lcid-webui-vllm:/app/backend/data
     environment:
+      # 'vllm' es el nombre del servicio 
       - OPENAI_API_BASE_URL=http://vllm:8000/v1
+      # vLLM no requiere una API key, pero el campo es necesario
       - OPENAI_API_KEY=vllm-dummy-key
     depends_on:
+      # Asegura que vLLM inicie antes que open-webui
       - vllm
