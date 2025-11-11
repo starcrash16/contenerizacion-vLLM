@@ -14,12 +14,12 @@ El objetivo es servir el modelo `Qwen/Qwen1.5-7B-Chat` en hardware GPU NVIDIA (A
 
 ---
 
-## Pila Tecnológica
+## Arquitectura
 
-La arquitectura de la solución se compone de:
+La propuesta de la solución se compone de:
 
 * **Motor de Contenedores:** `Podman` (arquitectura `daemonless` y `rootless`).
-* **Orquestación:** `podman-compose` (compatibilidad con sintaxis `compose.yml`).
+* **Orquestación:** `podman-compose` o `docker-compose` (compatibilidad con sintaxis `compose.yml`).
 * **Servidor de Inferencia:** `vllm/vllm-openai:latest` (expone API compatible con OpenAI en el puerto `8000`).
 * **Interfaz Gráfica:** `ghcr.io/open-webui/open-webui:main` (frontend de chat).
 * **Modelo:** `Qwen/Qwen1.5-7B-Chat` modelo oficial cargado desde Hugging Face.
