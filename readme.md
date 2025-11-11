@@ -22,7 +22,7 @@ La arquitectura de la solución se compone de:
 * **Orquestación:** `podman-compose` (compatibilidad con sintaxis `compose.yml`).
 * **Servidor de Inferencia:** `vllm/vllm-openai:latest` (expone API compatible con OpenAI en el puerto `8000`).
 * **Interfaz Gráfica:** `ghcr.io/open-webui/open-webui:main` (frontend de chat).
-* **Modelo:** `Qwen/Qwen1.5-7B-Chat` (SML <10B) cargado desde Hugging Face.
+* **Modelo:** `Qwen/Qwen1.5-7B-Chat` modelo oficial cargado desde Hugging Face.
 
 ---
 
@@ -32,13 +32,28 @@ El despliegue se gestiona a través del archivo `compose.yml` incluido en este r
 
 ### Requisitos Previos
 
-1.  `podman` instalado.
-2.  `podman-compose` instalado.
-3.  NVIDIA Container Toolkit configurado para Podman.
-4.  Creación de los directorios de volúmenes persistentes:
-    * `/datos/contenedores/lcid-vllm-modelos` (caché de modelos).
-    * `/datos/contenedores/lcid-webui-vllm` (datos de la UI).
-5.  Asignación de permisos adecuados en los directorios para el usuario `rootless` que ejecuta Podman.
+El archivo `compose.yml` es compatible tanto con `podman-compose` como con `docker-compose`. Los requisitos varían ligeramente según el motor de contenedores seleccionado.
+
+**Requisitos Comunes (Para ambos motores):**
+
+1.  **Directorios de Volúmenes:** Se deben crear las siguientes rutas en el *host* para los datos persistentes:
+    * `/datos/contenedores/lcid-vllm-modelos` (para el caché de modelos).
+    * `/datos/contenedores/lcid-webui-vllm` (para los datos de la UI).
+2.  **Soporte de GPU:** El **NVIDIA Container Toolkit** debe estar instalado y configurado para el motor de contenedores que se vaya a utilizar.
+
+**Requisitos Específicos (Elija una opción):**
+
+**Opción A: Podman (Rootless)**
+
+* `podman` instalado.
+* `podman-compose` instalado (ej. `pip install podman-compose`).
+* **Permisos:** Los directorios de volúmenes (`/datos/contenedores/...`) deben ser propiedad del usuario `rootless` que ejecutará los contenedores.
+
+**Opción B: Docker**
+
+* `docker` instalado.
+* `docker-compose` instalado (generalmente como un plugin de Docker, `docker compose`).
+* **Permisos:** El usuario debe tener permisos para comunicarse con el *daemon* de Docker (generalmente, perteneciendo al grupo `docker` o usando `sudo`).
 
 ### Ejecución de los Servicios
 
@@ -59,7 +74,7 @@ El primer inicio descargará las imágenes de los contenedores y el modelo `Qwen
 
 1.  Acceda a la interfaz web en `http://localhost:3001`.
 2.  Cree la cuenta de administrador local.
-3.  Navegue a **Settings** ➡️ **Models**.
+3.  Navegue a **Settings** -> **Models**.
 4.  Añada manualmente el nombre del modelo servido por vLLM:
     ```
     Qwen/Qwen1.5-7B-Chat
